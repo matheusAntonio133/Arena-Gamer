@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id         Int      @id @default(autoincrement())
+  nome       String
+  email      String   @unique
+  senha      String
+  criadoEm   DateTime @default(now()) @map("criado_em")
+
+  @@map("usuarios")
+}
+
+model Jogador {
+  id         Int        @id @default(autoincrement())
+  nome       String
+  cpf        String     @unique
+  telefone   String
+  email      String     @unique
+  criadoEm   DateTime   @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+  reservas   Reserva[]
+
+  @@map("jogadores")
+}
+
+model Jogo {
+  id         Int        @id @default(autoincrement())
+  nome       String
+  genero     String
+  plataforma String
+  criadoEm   DateTime   @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+  reservas   Reserva[]
+
+  @@map("jogos")
+}
+
+model Reserva {
+  id         Int      @id @default(autoincrement())
+  jogadorId  Int      @map("jogador_id")
+  jogoId     Int      @map("jogo_id")
+  data       String
+  horario    String
+  criadoEm   DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  jogador    Jogador @relation(fields: [jogadorId], references: [id], onDelete: Cascade)
+  jogo       Jogo    @relation(fields: [jogoId], references: [id], onDelete: Cascade)
+
+  @@map("reservas")
+}
